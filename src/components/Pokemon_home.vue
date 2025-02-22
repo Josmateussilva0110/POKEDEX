@@ -5,6 +5,7 @@
       <p class="pokemon-name">{{ formatUpper(name) }}</p>
       <p class="pokemon-types">{{ pokemon.types }}</p>
       <span class="pokemon-index">#{{ index }}</span>
+      <button class="btn" @click="changeImage">Alternar Imagem</button>
     </div>
   </div>
 </template>
@@ -55,6 +56,17 @@ export default {
   methods: {
     formatUpper(value) {
       return value.charAt(0).toUpperCase() + value.slice(1)
+    },
+
+    changeImage() {
+      if(this.isFront) {
+        this.isFront = false
+        this.currentImg = this.pokemon.sprite_shiny
+      }
+      else {
+        this.isFront = true
+        this.currentImg = this.pokemon.sprite_front
+      }
     }
   }
 }
@@ -119,4 +131,21 @@ export default {
   right: 0.8rem;
   opacity: 1;
 }
+
+.btn {
+  background: #b91313;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: transform 0.3s ease-in-out;
+}
+
+.btn:hover {
+  background: #680404;
+  transform: scale(1.07);
+}
+
 </style>
