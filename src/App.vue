@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div v-for="(value, index) in pokemons" :key="index">
-      <p>{{ index +1 }} - {{ value.name }}</p>
+      <Pokemon_home :name="value.name" :url="value.url" :index="index+1"/>
     </div>
   </div>
 </template>
@@ -9,6 +9,7 @@
 <script>
 
 import axios from 'axios'
+import Pokemon_home from './components/Pokemon_home.vue'
 
 export default {
   name: 'App',
@@ -24,6 +25,9 @@ export default {
       console.log("Pegou os pokemons")
       this.pokemons = data.data.results
     })
+  },
+  components: {
+    Pokemon_home
   }
 }
 
