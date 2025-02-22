@@ -83,9 +83,9 @@ export default {
   text-align: center;
   padding: 1rem;
   width: 18rem;
-  margin: 1rem;
   position: relative;
   transition: transform 0.3s ease-in-out;
+  margin: 0 auto;
 }
 
 .card:hover {

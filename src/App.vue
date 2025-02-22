@@ -1,9 +1,18 @@
 <template>
   <div id="app">
-    <div v-for="(value, index) in pokemons" :key="index">
-      <Pokemon_home :name="value.name" :url="value.url" :index="index+1"/>
+
+    <div class="title">
+      <h1>Pokédex</h1>
+    </div>
+
+
+    <div class="container">
+      <div v-for="(value, index) in pokemons" :key="index">
+        <Pokemon_home :name="value.name" :url="value.url" :index="index+1"/>
+      </div>
     </div>
   </div>
+
 </template>
 
 <script>
@@ -37,10 +46,26 @@ export default {
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #1c2733;
   background-color: rgb(14, 13, 13);
 }
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(295px, 1fr));
+  max-width: 1100px; 
+  margin: 0 auto;
+  gap: 3rem;
+  padding: 2rem;
+}
+
+
+.title {
+  color: #f5e507;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+
 </style>
