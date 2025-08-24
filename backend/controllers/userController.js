@@ -9,14 +9,13 @@ require('dotenv').config({ path: '../.env' })
 
 class UserController {
     async register(request, response) {
-        const { name, email, password, confirm_password, photo, phone } = request.body
+        const { name, email, password, confirm_password, photo} = request.body
 
         const error = FieldValidator.validate({
             name, 
             email,
             password,
-            confirm_password,
-            phone
+            confirm_password
         })
 
         if (error) {
@@ -33,7 +32,7 @@ class UserController {
         const passwordHash = await bcrypt.hash(password, salt)
 
         try {
-            const done = await User.save(name, email, passwordHash, photo, phone)
+            const done = await User.save(name, email, passwordHash, photo)
             if(!done) {
                 return response.status(500).json({status: false, message: "Erro ao cadastrar usuário."})
             }

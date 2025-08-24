@@ -18,9 +18,9 @@ class User {
         }
     }
 
-    async save(name, email, passwordHash, photo, phone) {
+    async save(name, email, passwordHash, photo) {
         try {
-            await knex.insert({name, email, password: passwordHash, photo, phone}).table("users")
+            await knex.insert({name, email, password: passwordHash, photo}).table("users")
             return true
         } catch(err) {
             console.log('erro ao cadastrar usuário', err)

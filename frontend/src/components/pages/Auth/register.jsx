@@ -11,6 +11,7 @@ function Register() {
   }
 
   async function submitForm(e) {
+    console.log('user: ',user)
     e.preventDefault()
     register(user)
   }
@@ -21,7 +22,7 @@ function Register() {
       <Input text="Seu Nome" type="text" name="name" placeholder="Digite seu Nome" handleOnChange={handleChange}/>
       <Input text="Seu Email" type="text" name="email" placeholder="Digite seu Email" handleOnChange={handleChange}/>
       <Input text="Sua Senha" type="password" name="password" placeholder="Digite sua Senha" handleOnChange={handleChange}/>
-      <Input text="Confirmar Senha" type="password" name="Confirm_password" placeholder="Confirmar Senha" handleOnChange={handleChange}/>
+      <Input text="Confirmar Senha" type="password" name="confirm_password" placeholder="Confirmar Senha" handleOnChange={handleChange}/>
       <input type="submit" value="Cadastrar"/>
     </form>
   )

@@ -1,2 +1,5 @@
-import EventEmitter from "events"
-export default new EventEmitter()
+import EventEmitter from "eventemitter3"
+
+const bus = new EventEmitter()
+
+export default bus
