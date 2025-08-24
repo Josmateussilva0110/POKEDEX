@@ -1,0 +1,53 @@
+.navbar {
+  background-color: #222;
+  padding: 10px;
+
+  position: fixed;   /* fixa no topo */
+  top: 0;            /* encostada no topo */
+  left: 0;
+  width: 100%;       /* ocupa toda a largura */
+  z-index: 1000;     /* garante que fica acima do conteúdo */
+}
+
+.navbar ul {
+  display: flex;                /* deixa os itens em linha */
+  list-style: none;             /* remove os bullets */
+  margin: 0;
+  padding: 0;
+  gap: 20px;                    /* espaçamento entre itens */
+}
+
+.navbar li {
+  position: relative;           /* necessário para o underline */
+  cursor: pointer;
+}
+
+.navbar a,
+.navbar li {
+  text-decoration: none;        /* remove sublinhado do link */
+  color: #fff;                  /* texto branco */
+  font-weight: 500;
+  padding: 5px 0;
+  transition: color 0.3s ease;
+}
+
+.navbar a:hover,
+.navbar li:hover {
+  color: #f9ca24;               /* cor do texto ao passar mouse */
+}
+
+/* underline animado */
+.navbar li::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 0%;
+  background-color: #f9ca24;    /* cor da linha */
+  transition: width 0.4s ease;
+}
+
+.navbar li:hover::after {
+  width: 100%;
+}

@@ -1,0 +1,15 @@
+.footer {
+  position: fixed;        /* fica fixo */
+  bottom: 0;              /* colado embaixo */
+  left: 0;
+  width: 100%;            /* ocupa toda a largura */
+  background-color: #222; /* fundo escuro */
+  color: #fff;            /* texto claro */
+  text-align: center;     /* centraliza o texto */
+  padding: 10px 0;        /* espaçamento interno */
+  font-size: 14px;
+}
+
+.footer .bold {
+  font-weight: bold;
+}

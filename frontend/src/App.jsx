@@ -4,17 +4,24 @@ import Home from './components/pages/Auth/Home'
 import FlashMessage from './components/layout/Message'
 import Profile from './components/pages/Auth/Profile'
 import Login from './components/pages/Auth/Login'
+import Footer from './components/layout/Footer'
+import Navbar from './components/layout/NavBar'
+import Container from './components/layout/Container'
 
 function App() {
   return (
     <>
-      <FlashMessage/>
+      <Navbar/>
+      <Container>
+        <FlashMessage/>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
         </Routes>
+      </Container>
+      <Footer/>
     </>
   )
 }
