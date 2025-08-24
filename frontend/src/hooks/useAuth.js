@@ -41,6 +41,17 @@ export default function useAuth() {
       localStorage.setItem('token', JSON.stringify(data.token))
     }
 
+    async function login(user) {
+      const response = await requestData('/user/login', 'POST', user)
+      if(response.success) {
+        setFlashMessage(response.data.message, 'success')
+        navigate('/')
+      }
+      else {
+        setFlashMessage(response.message, 'error')
+      }
+    }
+
     function logout() {
       setAuthenticated(false)
       localStorage.removeItem('token')
@@ -48,7 +59,7 @@ export default function useAuth() {
       setFlashMessage('Logout realizado com sucesso', 'success')
     }
 
-    return { authenticated, register, logout }
+    return { authenticated, register, login, logout }
   } catch (err) {
     console.error("Erro no useAuth:", err)
     return { authenticated: false, register: () => {}, logout: () => {} }
