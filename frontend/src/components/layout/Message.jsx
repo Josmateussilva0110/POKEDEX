@@ -5,7 +5,8 @@ function FlashMessage() {
   const [flashMessage, setFlashMessage] = useState(null)
 
   useEffect(() => {
-    const handleFlash = ({ message, type }) => {
+    const handleFlash = (payload) => {
+      const { message, type } = payload
       setFlashMessage({ message, type })
       setTimeout(() => setFlashMessage(null), 3000)
     }
@@ -20,7 +21,7 @@ function FlashMessage() {
   return (
     <>
       {flashMessage && (
-        <div className={`${styles.message} ${styles[flashMessage.type]}`}>
+        <div>
           {flashMessage.message}
         </div>
       )}
