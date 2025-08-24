@@ -1,16 +1,13 @@
-import { Routes, Route, Link } from 'react-router-dom'
-import { UserProvider } from './context/UserContext'
+import { Routes, Route } from 'react-router-dom'
 import Register from './components/pages/Auth/register'
-import Home from './components/pages/Auth/home'
+import Home from './components/pages/Auth/Home'
 
 function App() {
   return (
-    <UserProvider>
-      <Routes>
-        <Route path="/" element={<Home/>} />
-        <Route path="/register" element={<Register />} />
-      </Routes>
-    </UserProvider>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/register" element={<Register />} />
+    </Routes>
   )
 }
 
