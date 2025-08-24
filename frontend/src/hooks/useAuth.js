@@ -32,33 +32,23 @@ export default function useAuth() {
   }
 
   async function register(user) {
-    try {
       const response = await requestData('/user/register', 'POST', user)
       if (response.success) {
         await authUser(response.data)
-        setFlashMessage('Usuário registrado com sucesso', 'success')
+        setFlashMessage(response.data.message, 'success')
       } else {
-        setFlashMessage(response.message || 'Erro ao registrar', 'error')
+        setFlashMessage(response.message, 'error')
       }
-    } catch (err) {
-      console.error('Erro no register:', err)
-      setFlashMessage('Erro ao registrar usuário', 'error')
-    }
   }
 
   async function login(user) {
-    try {
       const response = await requestData('/user/login', 'POST', user)
       if (response.success) {
         await authUser(response.data)
-        setFlashMessage(response.data.message || 'Login realizado', 'success')
+        setFlashMessage(response.data.message, 'success')
       } else {
-        setFlashMessage(response.message || 'Erro ao logar', 'error')
+        setFlashMessage(response.message, 'error')
       }
-    } catch (err) {
-      console.error('Erro no login:', err)
-      setFlashMessage('Erro ao logar', 'error')
-    }
   }
 
   function logout() {

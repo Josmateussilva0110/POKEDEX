@@ -10,11 +10,8 @@ function Navbar() {
 
   return (
     <nav className={styles.navbar}>
+      <Link to="/">Home</Link>
       <ul>
-        <li>
-          <Link to="/">Home</Link>
-        </li>
-
         {authenticated ? (
           <>
             <li>

@@ -1,12 +1,14 @@
 .navbar {
   background-color: #222;
   padding: 10px;
-
+  display: flex;
   position: fixed;   /* fixa no topo */
   top: 0;            /* encostada no topo */
   left: 0;
   width: 100%;       /* ocupa toda a largura */
-  z-index: 1000;     /* garante que fica acima do conteúdo */
+  z-index: 1000; 
+  justify-content: space-between;    /* garante que fica acima do conteúdo */
+  align-items: center;
 }
 
 .navbar ul {
@@ -14,7 +16,9 @@
   list-style: none;             /* remove os bullets */
   margin: 0;
   padding: 0;
-  gap: 20px;                    /* espaçamento entre itens */
+  gap: 20px;   
+  justify-content: flex-end;  
+  margin-right: 3em;               
 }
 
 .navbar li {
