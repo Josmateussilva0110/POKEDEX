@@ -7,6 +7,7 @@ import Login from './components/pages/Auth/Login'
 import Footer from './components/layout/Footer'
 import Navbar from './components/layout/NavBar'
 import Container from './components/layout/Container'
+import PokemonDetail from './components/pages/Auth/PokemonDetail'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/pokemon/detail" element={<PokemonDetail />} />
         </Routes>
       </Container>
       <Footer/>

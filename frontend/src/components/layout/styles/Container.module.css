@@ -1,8 +1,9 @@
 .container {
-  height: 100vh;
+  min-height: calc(100vh - 60px); /* 100% da altura da tela menos a altura do footer */
   width: 100%;
   margin: 0;
   padding-top: 60px;   /* altura da navbar */
+  padding-bottom: 80px; /* espaço para o footer */
   background-color: rgb(224, 220, 220);
   box-sizing: border-box;
 }
