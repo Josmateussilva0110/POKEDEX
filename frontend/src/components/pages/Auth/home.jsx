@@ -16,22 +16,38 @@ function Home() {
         const response = await requestData(
           "https://pokeapi.co/api/v2/pokemon",
           "GET",
-          { limit: 1000, offset: 0 } 
+          { limit: 1000, offset: 0 }
         )
 
-        // filtra apenas os que estão entre 387 e 493
+        // filtra ids de Sinnoh
         const sinnohPokemons = response.data.results.filter((p) => {
           const id = parseInt(p.url.split("/")[6])
           return id >= startId && id <= endId
         })
 
-        setPokemon(sinnohPokemons)
+        const detailedPokemons = await Promise.all(
+          sinnohPokemons.map(async (p) => {
+            const details = await requestData(p.url, "GET")
+            return {
+              id: details.data.id,
+              name: details.data.name,
+              types: details.data.types.map((t) => t.type.name),
+              sprite: details.data.sprites.front_default, // normal
+              animated: details.data.sprites.versions["generation-v"]["black-white"].animated.front_default // animado
+            }
+          })
+        )
+
+        console.log(detailedPokemons)
+
+        setPokemon(detailedPokemons)
       } catch (error) {
         console.error("Erro ao buscar pokemons:", error)
       } finally {
         setLoading(false)
       }
     }
+
     fetchPokemons()
   }, [])
 
@@ -42,18 +58,17 @@ function Home() {
         <p>Carregando os pokemons...</p>
       ) : (
         <ul>
-          {pokemon.map((p) => {
-            const id = p.url.split("/")[6]
-            return (
-              <li key={id}>
-                <img
-                  src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`}
-                  alt={p.name}
-                />
-                #{id} - {p.name} - {p.url}
-              </li>
-            )
-          })}
+          {pokemon.map((p) => (
+            <li key={p.id}>
+              <img
+                src={p.animated || p.sprite}
+                alt={p.name}
+              />
+              #{p.id} - {p.name}
+              <br />
+              Tipos: {p.types.join(", ")}
+            </li>
+          ))}
         </ul>
       )}
     </div>
