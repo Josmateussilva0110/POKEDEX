@@ -1,8 +1,7 @@
 .navbar {
-  background-color: #750f0f;
+  background-color: #a70d0d;
   padding: 10px;
   display: flex;
-  position: fixed;   /* fixa no topo */
   top: 0;            /* encostada no topo */
   left: 0;
   width: 100%;       /* ocupa toda a largura */

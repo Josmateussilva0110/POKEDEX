@@ -3,4 +3,5 @@ html, body {
   padding: 0;
   height: 100%; /* garante que 100vh funcione corretamente */
   box-sizing: border-box;
+  overflow-x: hidden;
 }
