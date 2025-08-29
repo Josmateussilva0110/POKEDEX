@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom"
 import { useState, useEffect } from "react"
 import requestData from "../../../utils/requestApi"
 import styles from "./styles/Home.module.css"
+import Image from "../../form/Image"
 
 function Home() {
   const [pokemon, setPokemon] = useState([])
@@ -73,7 +74,7 @@ function Home() {
           <div className={styles.grid}>
             {currentPokemons.map((p) => (
               <div key={p.id} className={styles.card} onClick={() => navigate(`pokemon/detail/${p.id}`)}>
-                <img src={p.animated || p.sprite} alt={p.name} />
+                <Image src={p.animated || p.sprite} alt={p.name} size={130}/>
                 <div className={styles.pokemonId}>#{p.id}</div>
                 <div className={styles.pokemonName}>{p.name}</div>
                 <div className={styles.types}>

@@ -1,7 +1,7 @@
 .footer {
   bottom: 0;              /* colado embaixo */
   left: 0;
-  width: 99.2%;            /* ocupa toda a largura */
+  width: 100%;            /* ocupa toda a largura */
   background-color: #a70d0d;
   color: #fff;            /* texto claro */
   text-align: center;     /* centraliza o texto */

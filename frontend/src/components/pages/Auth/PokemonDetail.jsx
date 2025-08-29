@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom"
 import { useState, useEffect } from "react"
 import requestData from "../../../utils/requestApi"
+import Image from "../../form/Image"
 
 function PokemonDetail() {
   const [pokemon, setPokemon] = useState([])
@@ -12,7 +13,7 @@ function PokemonDetail() {
       try {
         setLoading(true)
         const response = await requestData(`https://pokeapi.co/api/v2/pokemon/${pokemon_id}`, 'GET', null)
-        console.log(response)
+        console.log(response.data)
         if(response.success) {
           setPokemon(response.data)
         }
@@ -34,6 +35,7 @@ function PokemonDetail() {
           <p>Carregando pokemon...</p>
         ): (
           <>
+            <Image src={pokemon.sprites.front_default} alt={pokemon.name} size={200}></Image>
             <p>id: {pokemon_id}</p>
             <p>nome: {pokemon.name}</p>
           </>
