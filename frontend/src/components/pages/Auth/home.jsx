@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom"
 import { useState, useEffect } from "react"
 import requestData from "../../../utils/requestApi"
 import styles from "./styles/Home.module.css"
@@ -6,10 +7,11 @@ function Home() {
   const [pokemon, setPokemon] = useState([])
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
+  const navigate = useNavigate()
   const pokemonsPerPage = 15 // quantidade por página
 
-  const startId = 650
-  const endId = 721
+  const startId = 152
+  const endId = 251
 
   useEffect(() => {
     async function fetchPokemons() {
@@ -21,25 +23,27 @@ function Home() {
           { limit: 1000, offset: 0 }
         )
 
-        const sinnohPokemons = response.data.results.filter((p) => {
+        if(response.success) {
+          const sinnohPokemons = response.data.results.filter((p) => {
           const id = parseInt(p.url.split("/")[6])
           return id >= startId && id <= endId
-        })
-
-        const detailedPokemons = await Promise.all(
-          sinnohPokemons.map(async (p) => {
-            const details = await requestData(p.url, "GET")
-            return {
-              id: details.data.id,
-              name: details.data.name,
-              sprite: details.data.sprites.front_default,
-              animated: details.data.sprites.front_default,
-              types: details.data.types.map((t) => t.type.name),
-            }
           })
-        )
 
-        setPokemon(detailedPokemons)
+          const detailedPokemons = await Promise.all(
+            sinnohPokemons.map(async (p) => {
+              const details = await requestData(p.url, "GET")
+              return {
+                id: details.data.id,
+                name: details.data.name,
+                sprite: details.data.sprites.front_default,
+                animated: details.data.sprites.front_default,
+                types: details.data.types.map((t) => t.type.name),
+              }
+            })
+          )
+          console.log(detailedPokemons)
+          setPokemon(detailedPokemons)
+        }
       } catch (error) {
         console.error("Erro ao buscar pokemons:", error)
       } finally {
@@ -68,7 +72,7 @@ function Home() {
         <>
           <div className={styles.grid}>
             {currentPokemons.map((p) => (
-              <div key={p.id} className={styles.card}>
+              <div key={p.id} className={styles.card} onClick={() => navigate(`pokemon/detail/${p.id}`)}>
                 <img src={p.animated || p.sprite} alt={p.name} />
                 <div className={styles.pokemonId}>#{p.id}</div>
                 <div className={styles.pokemonName}>{p.name}</div>

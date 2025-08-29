@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import Register from './components/pages/Auth/Register'
 import FlashMessage from './components/layout/Message'
 import Profile from './components/pages/Auth/Profile'
-import Home from './components/pages/Auth/Home'
+import Home from './components/pages/Auth/home'
 import Login from './components/pages/Auth/Login'
 import Footer from './components/layout/Footer'
 import Navbar from './components/layout/NavBar'
@@ -20,7 +20,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/pokemon/detail" element={<PokemonDetail />} />
+          <Route path="/pokemon/detail/:pokemon_id" element={<PokemonDetail />} />
         </Routes>
       </Container>
       <Footer/>
