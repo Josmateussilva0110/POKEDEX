@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import requestData from "../../../utils/requestApi"
 import styles from "./styles/Home.module.css"
 import Image from "../../form/Image"
+import colors from "../global_css/Colors.module.css"
 
 function Home() {
   const [pokemon, setPokemon] = useState([])
@@ -11,8 +12,8 @@ function Home() {
   const navigate = useNavigate()
   const pokemonsPerPage = 15 // quantidade por página
 
-  const startId = 152
-  const endId = 251
+  const startId = 1
+  const endId = 150
 
   useEffect(() => {
     async function fetchPokemons() {
@@ -81,7 +82,7 @@ function Home() {
                   {p.types.map((type) => (
                     <span
                       key={type}
-                      className={`${styles.type} ${styles[type]}`}
+                      className={`${colors.type} ${colors[type]}`}
                     >
                       {type}
                     </span>
