@@ -12,8 +12,8 @@ function Home() {
   const navigate = useNavigate()
   const pokemonsPerPage = 15 // quantidade por página
 
-  const startId = 1
-  const endId = 150
+  const startId = 151
+  const endId = 251
 
   useEffect(() => {
     async function fetchPokemons() {
