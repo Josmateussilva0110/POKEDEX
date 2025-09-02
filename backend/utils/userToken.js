@@ -12,7 +12,8 @@ const createToken = async (user, request, response) => {
         status: true,
         message: "Autenticação feita.",
         token,
-        userId: user.id
+        userId: user.id,
+        name: user.name
     })
 }
 

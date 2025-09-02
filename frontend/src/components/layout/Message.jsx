@@ -1,21 +1,35 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { CheckCircle, XCircle } from 'lucide-react'
+import { CheckCircle, XCircle, X } from 'lucide-react'
 import bus from '../../utils/bus'
 
 function FlashMessage() {
   const [flashMessage, setFlashMessage] = useState(null)
+  const [timeoutId, setTimeoutId] = useState(null)
 
   useEffect(() => {
     const handleFlash = (payload) => {
       const { message, type } = payload
       setFlashMessage({ message, type })
-      setTimeout(() => setFlashMessage(null), 3000)
+
+      // limpa timeout anterior
+      if (timeoutId) clearTimeout(timeoutId)
+
+      const id = setTimeout(() => setFlashMessage(null), 3000)
+      setTimeoutId(id)
     }
 
     bus.on('flash', handleFlash)
-    return () => bus.off('flash', handleFlash)
-  }, [])
+    return () => {
+      bus.off('flash', handleFlash)
+      if (timeoutId) clearTimeout(timeoutId) 
+    }
+  }, [timeoutId])
+
+  const closeMessage = () => {
+    if (timeoutId) clearTimeout(timeoutId) 
+    setFlashMessage(null)
+  }
 
   const typeStyles = {
     success: {
@@ -40,7 +54,14 @@ function FlashMessage() {
             className={`flex items-center gap-3 px-5 py-4 rounded-2xl shadow-lg border ${typeStyles[flashMessage.type]?.bg || "bg-gray-700 text-white border-gray-600"}`}
           >
             {typeStyles[flashMessage.type]?.icon}
-            <span>{flashMessage.message}</span>
+            <span className="flex-1">{flashMessage.message}</span>
+            {/* Botão de fechar */}
+            <button
+              onClick={closeMessage}
+              className="ml-2 text-white hover:text-gray-200"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
