@@ -7,6 +7,7 @@
   width: 100%;       /* ocupa toda a largura */
   justify-content: space-between;    /* garante que fica acima do conteúdo */
   align-items: center;
+  border-radius: 2px;
 }
 
 .navbar ul {

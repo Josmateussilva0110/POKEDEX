@@ -4,10 +4,10 @@
   width: 100%;            /* ocupa toda a largura */
   background-color: #a70d0d;
   color: #fff;  
-  position: fixed;          /* texto claro */
   text-align: center;     /* centraliza o texto */
-  padding: 10px 0;        /* espaçamento interno */
+  padding: 12px;        /* espaçamento interno */
   font-size: 14px;
+  border-radius: 2px;
 }
 
 .footer .bold {

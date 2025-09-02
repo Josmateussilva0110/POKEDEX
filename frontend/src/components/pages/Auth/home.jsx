@@ -10,10 +10,10 @@ function Home() {
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const navigate = useNavigate()
-  const pokemonsPerPage = 15 // quantidade por página
+  const pokemonsPerPage = 20 // quantidade por página
 
-  const startId = 151
-  const endId = 251
+  const startId = 387
+  const endId = 493
 
   useEffect(() => {
     async function fetchPokemons() {

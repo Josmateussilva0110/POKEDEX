@@ -51,7 +51,8 @@ function PokemonDetail() {
       {loading ? (
         <p className="text-gray-600 text-base animate-pulse">Carregando Pokémon...</p>
       ) : (
-        <div className="max-w-4xl w-full max-h-[95vh] bg-white rounded-2xl shadow-xl border border-gray-200 flex flex-col lg:flex-row overflow-y-auto relative -translate-y-14">
+        <div className="max-w-4xl w-full max-h-[95vh] bg-white rounded-2xl shadow-xl border border-gray-200 flex flex-col lg:flex-row overflow-y-auto relative -translate-y-14 
+                transform transition duration-500 hover:scale-105 hover:shadow-2xl">
 
           {/* Glow decorativo */}
           <div className="absolute inset-0 pointer-events-none">
@@ -68,7 +69,7 @@ function PokemonDetail() {
             <Image
               src={pokemon.sprites.front_default}
               alt={pokemon.name}
-              size={140}
+              size={200}
               className="transform hover:rotate-9 transition-transform duration-700"
             />
           </div>
