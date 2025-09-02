@@ -17,6 +17,11 @@ export default function useAuth() {
     }
     return false
   })
+
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('user')
+    return savedUser ? JSON.parse(savedUser) : null
+  })
   const [loading, setLoading] = useState(true)
 
   // Só para garantir que o loading seja desligado após a primeira renderização
@@ -26,7 +31,9 @@ export default function useAuth() {
 
   async function authUser(data) {
     setAuthenticated(true)
+    setUser({ id: data.userId, name: data.name })
     localStorage.setItem('token', JSON.stringify(data.token))
+    localStorage.setItem('user', JSON.stringify({ id: data.userId, name: data.name }))
     api.defaults.headers.Authorization = `Bearer ${data.token}`
     navigate('/')
   }
@@ -53,11 +60,13 @@ export default function useAuth() {
 
   function logout() {
     setAuthenticated(false)
+    setUser(null)
     localStorage.removeItem('token')
+    localStorage.removeItem('user')
     api.defaults.headers.Authorization = undefined
     navigate('/')
     setFlashMessage('Logout realizado com sucesso', 'success')
   }
 
-  return { authenticated, loading, register, login, logout }
+  return { authenticated, user, loading, register, login, logout }
 }
