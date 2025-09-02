@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
-import Register from './components/pages/Auth/Register'
+import Register from './components/pages/Auth/register'
 import FlashMessage from './components/layout/Message'
 import Profile from './components/pages/Auth/Profile'
 import Home from './components/pages/Auth/home'
