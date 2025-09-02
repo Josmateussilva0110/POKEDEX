@@ -8,7 +8,6 @@ import Footer from './components/layout/Footer'
 import Navbar from './components/layout/NavBar'
 import Container from './components/layout/Container'
 import PokemonDetail from './components/pages/Auth/PokemonDetail'
-import Teste from './components/pages/Auth/Test'
 
 function App() {
   return (
@@ -22,7 +21,6 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/pokemon/detail/:pokemon_id" element={<PokemonDetail />} />
-          <Route path="/test" element={<Teste />} />
         </Routes>
       </Container>
       <Footer/>
