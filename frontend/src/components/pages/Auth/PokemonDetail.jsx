@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom"
 import { useState, useEffect } from "react"
 import requestData from "../../../utils/requestApi"
 import Image from "../../form/Image"
+import styles from "../global_css/Colors.module.css"
 
 function PokemonDetail() {
   const [pokemon, setPokemon] = useState(null)
@@ -26,26 +27,6 @@ function PokemonDetail() {
 
   total_stats = pokemon?.stats?.reduce((acc, s) => acc + s.base_stat, 0) || 0
 
-  const typeColors = {
-    fire: "from-red-400 to-red-600",
-    water: "from-blue-400 to-blue-600",
-    grass: "from-green-400 to-green-600",
-    electric: "from-yellow-300 to-yellow-500",
-    poison: "from-purple-400 to-purple-600",
-    normal: "from-gray-300 to-gray-500",
-    flying: "from-indigo-300 to-indigo-500",
-    bug: "from-lime-400 to-lime-600",
-    fighting: "from-orange-500 to-orange-700",
-    ground: "from-amber-400 to-amber-600",
-    rock: "from-stone-400 to-stone-600",
-    ghost: "from-violet-500 to-violet-700",
-    ice: "from-cyan-200 to-cyan-400",
-    dragon: "from-indigo-600 to-indigo-800",
-    dark: "from-gray-700 to-gray-900",
-    steel: "from-gray-400 to-gray-600",
-    fairy: "from-pink-400 to-pink-600"
-  }
-
   return (
     <div className="flex items-center justify-center p-1 bg-gradient-to-b from-gray-100 to-gray-300 h-screen">
       {loading ? (
@@ -58,9 +39,9 @@ function PokemonDetail() {
           <div className="absolute inset-0 pointer-events-none">
             {pokemon.types?.map((type, idx) => (
               <span
-                key={idx}
-                className={`absolute top-0 left-0 w-full h-full rounded-2xl opacity-20 blur-2xl bg-gradient-to-r ${typeColors[type.type.name] || 'from-gray-400 to-gray-500'}`}
-              />
+                  key={idx}
+                  className={`${styles[type.type.name]} absolute top-0 left-0 w-full h-full rounded-2xl opacity-20 blur-2xl`}
+                />
             ))}
           </div>
 
@@ -83,11 +64,12 @@ function PokemonDetail() {
             <div className="flex gap-2 mb-3 flex-wrap">
               {pokemon.types?.map((type, idx) => (
                 <span
-                  key={idx}
-                  className={`px-2 py-1 rounded-full font-semibold text-white text-xs capitalize bg-gradient-to-r ${typeColors[type.type.name] || 'from-gray-400 to-gray-500'}`}
-                >
-                  {type.type.name}
-                </span>
+                    key={idx}
+                    className={`${styles.type} ${styles[type.type.name]}`}
+                  >
+                    {type.type.name}
+                  </span>
+
               ))}
             </div>
 
