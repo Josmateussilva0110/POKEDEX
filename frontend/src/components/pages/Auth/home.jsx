@@ -6,12 +6,16 @@ import styles from "./styles/Home.module.css"
 import Image from "../../form/Image"
 import colors from "../global_css/Colors.module.css"
 import ConfirmModal from "../../form/ConfirmModal"
+import useFlashMessage from "../../../hooks/useFlashMessage"
 
 function Home() {
   const [pokemon, setPokemon] = useState([])
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const [favorites, setFavorites] = useState([])
+  const [token] = useState(() => JSON.parse(localStorage.getItem('token')))
+  const [user] = useState(() => JSON.parse(localStorage.getItem('user')))
+  const { setFlashMessage } = useFlashMessage()
 
   // modal
   const [modalOpen, setModalOpen] = useState(false)
@@ -71,21 +75,26 @@ function Home() {
 
   // confirmar favorito (chama backend aqui)
   const confirmFavorite = async () => {
+    const formData = {}
+    formData.pokemon_id = selectedPokemon.id
+    formData.user_id = user.id
     if (selectedPokemon) {
-      try {
         // exemplo de chamada para o backend
-        await requestData(
-          "/api/favorites", 
+        const response = await requestData(
+          "/pokemon", 
           "POST", 
-          { pokemonId: selectedPokemon.id }
+          formData,
+          token
         )
-
+        if(response.success) {
+          setFlashMessage(response.data.message, 'success')
+        }
+        else {
+          setFlashMessage(response.message, 'error')
+        }
+        //console.log(response.data)
         // atualiza localmente
         setFavorites((prev) => [...prev, selectedPokemon.id])
-        console.log(`Pokémon ${selectedPokemon.name} adicionado aos favoritos!`)
-      } catch (err) {
-        console.error("Erro ao salvar favorito:", err)
-      }
     }
     setModalOpen(false)
   }
