@@ -55,6 +55,8 @@ function Home() {
               }
             })
           )
+          const pokemonsIds = await requestData(`/pokemons/${user.id}`, 'GET', null, token)
+          console.log('ids: ', pokemonsIds)
           setPokemon(detailedPokemons)
         }
       } catch (error) {

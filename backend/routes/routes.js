@@ -28,5 +28,7 @@ router.patch('/user/:id', verifyToken, (request, response, next) => {
 // rotas para pokemons
 
 router.post('/pokemon', verifyToken, PokemonController.addFavorite)
+router.get('/pokemons/:user_id', verifyToken, PokemonController.getPokemons)
+
 
 module.exports = router

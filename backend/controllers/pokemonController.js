@@ -25,6 +25,20 @@ class PokemonController {
         }
         return response.status(200).json({status: true, message: "Pokemon adicionado com sucesso."})
     }
+
+    async getPokemons(request, response) {
+        const {user_id} = request.params
+        if (!validator.isInt(user_id + '', { min: 1 })) {
+            return response.status(422).json({status: false, message: 'Usuário invalido.'})
+        }
+
+        const pokemons = await Pokemon.getPokemonsIds(user_id)
+        console.log(pokemons)
+        if(!pokemons) {
+            return response.status(404).json({status: false, message: "nenhum pokemon encontrado."})
+        }
+        return response.status(200).json({status: true, pokemons})
+    }
 }
 
 module.exports = new PokemonController()

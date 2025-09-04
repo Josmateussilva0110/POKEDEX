@@ -17,6 +17,21 @@ class Pokemon {
         }
     }
 
+    async getPokemonsIds(user_id) {
+        try {
+            const result = await knex.select("pokemon_id").where({user_id}).table("pokemons_favorites")
+            if(result.length > 0) {
+                return result
+            }
+            else {
+                return undefined
+            }
+        } catch(err) {
+            console.log('erro ao buscar ids de pokemons', err)
+            return undefined
+        }
+    }
+
 
     async save(user_id, pokemon_id) {
         try {

@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./index.js localhost 8080",
-    "migrate": "knex migrate:latest --knexfile knexfile.js"
+  "dev": "nodemon index.js --watch . --ext js,json",
+  "start": "node index.js",
+  "migrate": "knex migrate:latest --knexfile knexfile.js"
   },
   "author": "",
   "license": "ISC",
