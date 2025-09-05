@@ -1,16 +1,28 @@
 import { useNavigate } from "react-router-dom"
 import { useState, useEffect } from "react"
+import { Star, StarOff } from "lucide-react"
 import requestData from "../../../utils/requestApi"
 import styles from "./styles/Home.module.css"
 import Image from "../../form/Image"
 import colors from "../global_css/Colors.module.css"
+import ConfirmModal from "../../form/ConfirmModal"
+import useFlashMessage from "../../../hooks/useFlashMessage"
 
 function Home() {
   const [pokemon, setPokemon] = useState([])
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
+  const [favorites, setFavorites] = useState([])
+  const [token] = useState(() => JSON.parse(localStorage.getItem('token')))
+  const [user] = useState(() => JSON.parse(localStorage.getItem('user')))
+  const { setFlashMessage } = useFlashMessage()
+
+  // modal
+  const [modalOpen, setModalOpen] = useState(false)
+  const [selectedPokemon, setSelectedPokemon] = useState(null)
+
   const navigate = useNavigate()
-  const pokemonsPerPage = 20 // quantidade por página
+  const pokemonsPerPage = 20 
 
   const startId = 387
   const endId = 493
@@ -27,8 +39,8 @@ function Home() {
 
         if(response.success) {
           const sinnohPokemons = response.data.results.filter((p) => {
-          const id = parseInt(p.url.split("/")[6])
-          return id >= startId && id <= endId
+            const id = parseInt(p.url.split("/")[6])
+            return id >= startId && id <= endId
           })
 
           const detailedPokemons = await Promise.all(
@@ -43,7 +55,14 @@ function Home() {
               }
             })
           )
-          console.log(detailedPokemons)
+          if(user) {
+            const pokemonsIds = await requestData(`/pokemons/${user.id}`, 'GET', null, token)
+            console.log(pokemonsIds)
+            if(pokemonsIds.success) {
+              const ids = pokemonsIds.data.pokemons.map(p => p.pokemon_id)
+              setFavorites(ids) 
+            }
+          }
           setPokemon(detailedPokemons)
         }
       } catch (error) {
@@ -55,6 +74,38 @@ function Home() {
 
     fetchPokemons()
   }, [])
+
+  // abrir modal para confirmar favorito
+  const handleFavoriteClick = (p) => {
+    setSelectedPokemon(p)
+    setModalOpen(true)
+  }
+
+  // confirmar favorito (chama backend aqui)
+  const confirmFavorite = async () => {
+    const formData = {}
+    formData.pokemon_id = selectedPokemon.id
+    formData.user_id = user.id
+    if (selectedPokemon) {
+        // exemplo de chamada para o backend
+        const response = await requestData(
+          "/pokemon", 
+          "POST", 
+          formData,
+          token
+        )
+        if(response.success) {
+          setFlashMessage(response.data.message, 'success')
+        }
+        else {
+          setFlashMessage(response.message, 'error')
+        }
+        //console.log(response.data)
+        // atualiza localmente
+        setFavorites((prev) => [...prev, selectedPokemon.id])
+    }
+    setModalOpen(false)
+  }
 
   // calcular índices da página atual
   const indexOfLast = currentPage * pokemonsPerPage
@@ -74,7 +125,26 @@ function Home() {
         <>
           <div className={styles.grid}>
             {currentPokemons.map((p) => (
-              <div key={p.id} className={styles.card} onClick={() => navigate(`pokemon/detail/${p.id}`)}>
+              <div 
+                key={p.id} 
+                className={styles.card} 
+                onClick={() => navigate(`pokemon/detail/${p.id}`)}
+              >
+                {/* Estrela de favoritos */}
+                <div
+                  className={styles.favoriteIcon}
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    handleFavoriteClick(p)
+                  }}
+                >
+                  {favorites.includes(p.id) ? (
+                    <Star className={styles.starFilled} />
+                  ) : (
+                    <StarOff className={styles.starEmpty} />
+                  )}
+                </div>
+
                 <Image src={p.animated || p.sprite} alt={p.name} size={130}/>
                 <div className={styles.pokemonId}>#{p.id}</div>
                 <div className={styles.pokemonName}>{p.name}</div>
@@ -114,6 +184,15 @@ function Home() {
           </div>
         </>
       )}
+
+      {/* Modal de confirmação */}
+      <ConfirmModal 
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onConfirm={confirmFavorite}
+        title="Confirmar favorito"
+        message={`Deseja adicionar ${selectedPokemon?.name} aos seus favoritos?`}
+      />
     </div>
   )
 }

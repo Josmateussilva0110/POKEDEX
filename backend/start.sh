@@ -7,5 +7,4 @@
 npx knex migrate:latest
 
 # Inicia o servidor com nodemon
-nodemon index.js --watch src --ext js,json
-
+npm run dev

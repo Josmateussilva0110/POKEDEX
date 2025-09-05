@@ -1,6 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const UserController = require("../controllers/userController")
+const PokemonController = require("../controllers/pokemonController")
 const verifyToken = require("../middleware/verifyToken")
 const imageUpload = require("../middleware/image_upload")
 const checkImage = require("../middleware/verifyImage")
@@ -22,5 +23,12 @@ router.patch('/user/:id', verifyToken, (request, response, next) => {
         UserController.editUser(request, response)
     })
 })
+
+
+// rotas para pokemons
+
+router.post('/pokemon', verifyToken, PokemonController.addFavorite)
+router.get('/pokemons/:user_id', verifyToken, PokemonController.getPokemons)
+
 
 module.exports = router

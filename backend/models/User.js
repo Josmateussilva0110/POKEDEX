@@ -45,7 +45,7 @@ class User {
 
     async findById(id) {
         try {
-            var result = await knex.select(["id", "name", "email", "phone", "photo", "created_at", "updated_at"]).where({id: id}).table("users")
+            var result = await knex.select(["id", "name", "email", "photo", "created_at", "updated_at"]).where({id: id}).table("users")
             if(result.length > 0) {
                 return result[0]
             }

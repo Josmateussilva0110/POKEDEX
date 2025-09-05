@@ -110,6 +110,27 @@
 }
 
 
+
+.favoriteIcon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
+}
+
+.starFilled {
+  color: gold;
+  width: 24px;
+  height: 24px;
+}
+
+.starEmpty {
+  color: gray;
+  width: 24px;
+  height: 24px;
+}
+
+
 /* Responsividade */
 @media (max-width: 600px) {
   .title {

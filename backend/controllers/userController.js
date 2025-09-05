@@ -110,59 +110,41 @@ class UserController {
     async editUser(request, response) {
         var update = {}
         const id = request.params.id 
-        const {name, email, phone} = request.body
+        const {name, email} = request.body
 
-        const error = FieldValidator.validate({
-            id,
-            name,
-            email,
-            phone
-        })
+        const error = FieldValidator.validate({ id, name, email })
+        if (error) return response.status(422).json({ status: false, message: error })
 
-        if (error) {
-            return response.status(422).json({ status: false, message: error })
-        }
         update.name = name
         update.email = email
-        update.phone = phone
 
         const result = await getUserAndToken(request)
-        if(!result) {
-            return response.status(401).json({status: false, message: "Usuário não autenticado."})
-        }
+        if(!result) return response.status(401).json({status: false, message: "Usuário não autenticado."})
+        
         const {user} = result
-
         if (parseInt(id) !== user.id) {
-            return response.status(403).json({
-                status: false,
-                message: "Operação não permitida. Token não corresponde."
-            })
+            return response.status(403).json({status: false, message: "Operação não permitida. Token não corresponde."})
         }
 
         const emailExists = await User.emailExists(email)
-
         if(user.email !== email && emailExists) {
-            response.status(422).json({status: false, message: "Email já existe."})
-            return 
+            return response.status(422).json({status: false, message: "Email já existe."})
         }
 
-        let image = ''
         if(request.file) {
-            image = request.file.filename
+            update.photo = request.file.filename
         }
-
-        update.photo = image
 
         try {
             var done = await User.update(id, update)
-            if(!done) {
-                return response.status(422).json({status: false, message: "Erro ao atualizar usuário."}) 
-            }
+            if(!done) return response.status(422).json({status: false, message: "Erro ao atualizar usuário."}) 
+
             return response.status(200).json({status: true, message: "Dados atualizados com sucesso."})
         } catch(err) {
             return response.status(500).json({status: false, message: err})
         }
     }
+
 }
 
 module.exports = new UserController()
