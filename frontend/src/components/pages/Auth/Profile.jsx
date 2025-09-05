@@ -4,6 +4,7 @@ import Image from "../../form/Image"
 import requestData from "../../../utils/requestApi"
 import useFlashMessage from "../../../hooks/useFlashMessage"
 import ImageUpload from "../../form/ImageUpload"
+import updateUser from "./services/userService/userService"
 
 function Profile() {
   const [activeTab, setActiveTab] = useState("edit") // aba inicial
@@ -12,48 +13,6 @@ function Profile() {
   const [token] = useState(() => JSON.parse(localStorage.getItem('token')))
   const [user_id] = useState(() => JSON.parse(localStorage.getItem('user')))
   const { setFlashMessage } = useFlashMessage()
-
-  function handleChange(event) {
-    setUser({ ...user, [event.target.name]: event.target.value })
-  }
-
-  async function submitForm(e) {
-    e.preventDefault()
-    let msgType = 'success'
-
-    const formData = new FormData()
-
-    Object.keys(user).forEach((key) => {
-      if (key === "photo") {
-        // só adiciona se for um File (ou seja, usuário trocou a foto)
-        if (user.photo instanceof File) {
-          formData.append("photo", user.photo)
-        }
-      } else {
-        // adiciona os outros normalmente
-        formData.append(key, user[key])
-      }
-    })
-
-    const response = await requestData(`/user/${user_id.id}`, 'PATCH', formData, token)
-
-    if (response.success) {
-      setFlashMessage(response.data.message, msgType)
-    } else {
-      msgType = 'error'
-      setFlashMessage(response.message, msgType)
-    }
-  }
-
-
-  function onFileChange(e) {
-    const file = e.target.files[0]
-    setPreview(file)
-    setUser(prev => {
-      const updated = { ...prev, [e.target.name]: file }
-      return updated
-    })
-  }
 
   useEffect(() => {
     async function fetchUser() {
@@ -67,6 +26,33 @@ function Profile() {
     }
     fetchUser()
   }, [])
+
+  function handleChange(event) {
+    setUser({ ...user, [event.target.name]: event.target.value })
+  }
+
+  function onFileChange(event) {
+    const file = event.target.files[0]
+    setPreview(file)
+    setUser(prev => {
+      const updated = { ...prev, [event.target.name]: file }
+      return updated
+    })
+  }
+
+  async function submitForm(event) {
+    event.preventDefault()
+    let msgType = 'success'
+    
+    const response = await updateUser(user_id.id, user, token)
+
+    if (response.success) {
+      setFlashMessage(response.data.message, msgType)
+    } else {
+      msgType = 'error'
+      setFlashMessage(response.message, msgType)
+    }
+  } 
 
   return (
     <div className="p-4">
