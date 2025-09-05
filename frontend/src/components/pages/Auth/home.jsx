@@ -55,8 +55,14 @@ function Home() {
               }
             })
           )
-          const pokemonsIds = await requestData(`/pokemons/${user.id}`, 'GET', null, token)
-          console.log('ids: ', pokemonsIds)
+          if(user) {
+            const pokemonsIds = await requestData(`/pokemons/${user.id}`, 'GET', null, token)
+            console.log(pokemonsIds)
+            if(pokemonsIds.success) {
+              const ids = pokemonsIds.data.pokemons.map(p => p.pokemon_id)
+              setFavorites(ids) 
+            }
+          }
           setPokemon(detailedPokemons)
         }
       } catch (error) {

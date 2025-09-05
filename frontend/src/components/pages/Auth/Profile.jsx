@@ -1,7 +1,72 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import Input from "../../form/Input"
+import Image from "../../form/Image"
+import requestData from "../../../utils/requestApi"
+import useFlashMessage from "../../../hooks/useFlashMessage"
+import ImageUpload from "../../form/ImageUpload"
 
 function Profile() {
   const [activeTab, setActiveTab] = useState("edit") // aba inicial
+  const [user, setUser] = useState({})
+  const [preview, setPreview] = useState()
+  const [token] = useState(() => JSON.parse(localStorage.getItem('token')))
+  const [user_id] = useState(() => JSON.parse(localStorage.getItem('user')))
+  const { setFlashMessage } = useFlashMessage()
+
+  function handleChange(event) {
+    setUser({ ...user, [event.target.name]: event.target.value })
+  }
+
+  async function submitForm(e) {
+    e.preventDefault()
+    let msgType = 'success'
+
+    const formData = new FormData()
+
+    Object.keys(user).forEach((key) => {
+      if (key === "photo") {
+        // só adiciona se for um File (ou seja, usuário trocou a foto)
+        if (user.photo instanceof File) {
+          formData.append("photo", user.photo)
+        }
+      } else {
+        // adiciona os outros normalmente
+        formData.append(key, user[key])
+      }
+    })
+
+    const response = await requestData(`/user/${user_id.id}`, 'PATCH', formData, token)
+
+    if (response.success) {
+      setFlashMessage(response.data.message, msgType)
+    } else {
+      msgType = 'error'
+      setFlashMessage(response.message, msgType)
+    }
+  }
+
+
+  function onFileChange(e) {
+    const file = e.target.files[0]
+    setPreview(file)
+    setUser(prev => {
+      const updated = { ...prev, [e.target.name]: file }
+      return updated
+    })
+  }
+
+  useEffect(() => {
+    async function fetchUser() {
+      const response = await requestData(`/user/${user_id.id}`, 'GET', null, token)
+      if (response.success) {
+        setUser(response.data.user)
+      }
+      else {
+        setFlashMessage(response.message, 'error')
+      }
+    }
+    fetchUser()
+  }, [])
 
   return (
     <div className="p-4">
@@ -26,12 +91,58 @@ function Profile() {
       {/* Conteúdo das abas */}
       <div>
         {activeTab === "edit" && (
-          <div>
-            <h2 className="text-xl mb-2">Editar Dados</h2>
-            <form className="flex flex-col gap-2">
-              <input type="text" placeholder="Nome" className="border p-2 rounded" />
-              <input type="email" placeholder="Email" className="border p-2 rounded" />
-              <button className="bg-blue-500 text-white px-4 py-2 rounded">Salvar</button>
+          <div className="w-full max-w-md bg-white shadow-2xl rounded-2xl p-8">
+
+            {/* Título */}
+            <h2 className="text-2xl font-bold text-center text-red-600 mb-6">
+              Editar
+            </h2>
+
+            {/* Imagem centralizada */}
+            {(user.photo || preview) && (
+              <div className="flex justify-center mb-6">
+                <Image
+                  src={
+                    preview
+                      ? URL.createObjectURL(preview)
+                      : `${import.meta.env.VITE_API_URL}/images/users/${user.photo}`
+                  }
+                  alt={user.name}
+                  size={100}
+                />
+              </div>
+            )}
+
+            {/* Form */}
+            <form onSubmit={submitForm} className="space-y-5">
+              <Input
+                text="Seu Nome"
+                type="text"
+                name="name"
+                placeholder="Digite seu Nome"
+                handleOnChange={handleChange}
+                value={user.name || ''}
+              />
+              <Input
+                text="Seu Email"
+                type="text"
+                name="email"
+                placeholder="Digite seu Email"
+                handleOnChange={handleChange}
+                value={user.email || ''}
+              />
+
+              <ImageUpload onFileChange={onFileChange} />
+
+              {/* Botão */}
+              <button
+                type="submit"
+                className="w-full py-2 px-4 bg-red-600 text-white font-semibold rounded-xl shadow-md 
+                       hover:bg-red-700 focus:outline-none focus:ring-2
+                       transform transition duration-300 hover:scale-105"
+              >
+                Editar
+              </button>
             </form>
           </div>
         )}
