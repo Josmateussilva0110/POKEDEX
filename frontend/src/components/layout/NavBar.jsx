@@ -2,11 +2,14 @@ import { Link } from 'react-router-dom'
 import { useContext, useState } from 'react'
 import { Context } from '../../context/UserContext'
 import { ChevronDown } from 'lucide-react'
+
 import Image from '../form/Image'
+
 
 function Navbar() {
   const { authenticated, user, logout, loading } = useContext(Context)
   const [dropdownOpen, setDropdownOpen] = useState(false)
+
 
   if (loading) return null
 
