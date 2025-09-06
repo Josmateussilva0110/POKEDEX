@@ -1,18 +1,27 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import Input from "../../form/Input"
 import Image from "../../form/Image"
 import requestData from "../../../utils/requestApi"
 import useFlashMessage from "../../../hooks/useFlashMessage"
 import ImageUpload from "../../form/ImageUpload"
-import updateUser from "./services/userService/userService"
+import { Context } from "../../../context/UserContext"
 
 function Profile() {
   const [activeTab, setActiveTab] = useState("edit") // aba inicial
   const [user, setUser] = useState({})
   const [preview, setPreview] = useState()
-  const [token] = useState(() => JSON.parse(localStorage.getItem('token')))
-  const [user_id] = useState(() => JSON.parse(localStorage.getItem('user')))
+  const [token] = useState(() => {
+    const storedToken = localStorage.getItem('token')
+    return storedToken ? JSON.parse(storedToken) : null
+  })
+
+  const [user_id] = useState(() => {
+  const storedUser = localStorage.getItem('user')
+    return storedUser ? JSON.parse(storedUser) : null
+  })
+
   const { setFlashMessage } = useFlashMessage()
+  const { updateUser } = useContext(Context)
 
   useEffect(() => {
     async function fetchUser() {
