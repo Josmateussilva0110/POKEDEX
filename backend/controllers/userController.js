@@ -138,8 +138,8 @@ class UserController {
         try {
             var done = await User.update(id, update)
             if(!done) return response.status(422).json({status: false, message: "Erro ao atualizar usuário."}) 
-
-            return response.status(200).json({status: true, message: "Dados atualizados com sucesso."})
+            const userUpdate = await User.findById(id)
+            return response.status(200).json({status: true, message: "Dados atualizados com sucesso.", user: userUpdate})
         } catch(err) {
             return response.status(500).json({status: false, message: err})
         }

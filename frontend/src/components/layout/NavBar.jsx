@@ -2,11 +2,11 @@ import { Link } from 'react-router-dom'
 import { useContext, useState } from 'react'
 import { Context } from '../../context/UserContext'
 import { ChevronDown } from 'lucide-react'
+import Image from '../form/Image'
 
 function Navbar() {
   const { authenticated, user, logout, loading } = useContext(Context)
   const [dropdownOpen, setDropdownOpen] = useState(false)
-  console.log(user)
 
   if (loading) return null
 
@@ -40,7 +40,16 @@ function Navbar() {
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className="flex items-center gap-2 text-yellow-400 hover:text-yellow-600 transition font-medium"
             >
-              Olá, {user?.name}
+              {user?.photo ? (
+                <Image
+                  src={`${import.meta.env.VITE_API_URL}/images/users/${user.photo}`}
+                  alt={user?.name}
+                  size={50}
+                />
+              ) : (
+                <span>Olá, {user?.name}</span>
+              )}
+
               <ChevronDown className={`w-4 h-4 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
             </button>
 

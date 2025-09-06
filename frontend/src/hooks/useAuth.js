@@ -8,56 +8,77 @@ export default function useAuth() {
   const navigate = useNavigate()
   const { setFlashMessage } = useFlashMessage()
 
-  // Inicializa baseado no token existente
+  // Estado inicial com proteção contra JSON inválido
   const [authenticated, setAuthenticated] = useState(() => {
-    const token = localStorage.getItem('token')
-    if (token) {
-      api.defaults.headers.Authorization = `Bearer ${JSON.parse(token)}`
-      return true
+    try {
+      const token = localStorage.getItem('token')
+      if (token) {
+        const parsedToken = JSON.parse(token)
+        if (parsedToken) {
+          api.defaults.headers.Authorization = `Bearer ${parsedToken}`
+          return true
+        }
+      }
+      return false
+    } catch {
+      return false
     }
-    return false
   })
 
   const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem('user')
-    return savedUser ? JSON.parse(savedUser) : null
+    try {
+      const savedUser = localStorage.getItem('user')
+      return savedUser ? JSON.parse(savedUser) : null
+    } catch {
+      return null
+    }
   })
+
   const [loading, setLoading] = useState(true)
 
-  // Só para garantir que o loading seja desligado após a primeira renderização
+  // Desliga o loading após a primeira renderização
   useEffect(() => {
     setLoading(false)
   }, [])
 
+  // 🔑 Login/registro bem-sucedido
   async function authUser(data) {
     setAuthenticated(true)
-    setUser({ id: data.userId, name: data.name })
+
+    // Aqui garantimos que "data.user" existe
+    const userData = data.user || { id: data.userId, name: data.name }
+
+    setUser(userData)
     localStorage.setItem('token', JSON.stringify(data.token))
-    localStorage.setItem('user', JSON.stringify({ id: data.userId, name: data.name }))
+    localStorage.setItem('user', JSON.stringify(userData))
+
     api.defaults.headers.Authorization = `Bearer ${data.token}`
     navigate('/')
   }
 
+  // 📌 Registrar
   async function register(user) {
-      const response = await requestData('/user/register', 'POST', user)
-      if (response.success) {
-        await authUser(response.data)
-        setFlashMessage(response.data.message, 'success')
-      } else {
-        setFlashMessage(response.message, 'error')
-      }
+    const response = await requestData('/user/register', 'POST', user)
+    if (response.success) {
+      await authUser(response.data)
+      setFlashMessage(response.data.message, 'success')
+    } else {
+      setFlashMessage(response.message, 'error')
+    }
   }
 
+  // 📌 Login
   async function login(user) {
-      const response = await requestData('/user/login', 'POST', user)
-      if (response.success) {
-        await authUser(response.data)
-        setFlashMessage(response.data.message, 'success')
-      } else {
-        setFlashMessage(response.message, 'error')
-      }
+    const response = await requestData('/user/login', 'POST', user)
+    if (response.success) {
+      await authUser(response.data)
+      setFlashMessage(response.data.message, 'success')
+    } else {
+      setFlashMessage(response.message, 'error')
+    }
   }
 
+  // 📌 Logout
   function logout() {
     setAuthenticated(false)
     setUser(null)
@@ -68,5 +89,31 @@ export default function useAuth() {
     setFlashMessage('Logout realizado com sucesso', 'success')
   }
 
-  return { authenticated, user, loading, register, login, logout }
+  // 📌 Atualizar usuário
+  async function updateUser(user_id, userData, token) {
+    const formData = new FormData()
+
+    Object.keys(userData).forEach((key) => {
+      if (key === "photo") {
+        if (userData.photo instanceof File) {
+          formData.append("photo", userData.photo)
+        }
+      } else {
+        formData.append(key, userData[key])
+      }
+    })
+
+    const response = await requestData(`/user/${user_id}`, 'PATCH', formData, token)
+
+    if (response.success) {
+      console.log('updated: ',response)
+      // 🔥 Atualiza o contexto e localStorage com o usuário atualizado
+      setUser(response.data.user)
+      localStorage.setItem('user', JSON.stringify(response.data.user))
+    }
+
+    return response
+  }
+
+  return { authenticated, user, loading, register, login, logout, updateUser }
 }
