@@ -10,6 +10,9 @@ function Profile() {
   const [activeTab, setActiveTab] = useState("edit") // aba inicial
   const [user, setUser] = useState({})
   const [preview, setPreview] = useState()
+  const [loading, setLoading] = useState(true)
+  const [pokemons, setPokemons] = useState([])
+  const [pokemonsFavoritos, setPokemonsFavoritos] = useState([]) 
   const [token] = useState(() => {
     const storedToken = localStorage.getItem('token')
     return storedToken ? JSON.parse(storedToken) : null
@@ -35,6 +38,58 @@ function Profile() {
     }
     fetchUser()
   }, [])
+
+  useEffect(() => {
+    async function fetchFavoritesPokemons() {
+      const response = await requestData(`/pokemons/${user_id.id}`, 'GET', null, token)
+      if(response.success) {
+        const ids = response.data.pokemons.map(p => p.pokemon_id)
+        setPokemons(ids)
+      }
+    }
+    fetchFavoritesPokemons()
+  }, [])
+
+  useEffect(() => {
+    if(pokemons.length === 0) return 
+    async function fetchPokemons() {
+      try {
+        setLoading(true)
+        const response = await requestData(
+          "https://pokeapi.co/api/v2/pokemon",
+          "GET",
+          { limit: 1000, offset: 0 }
+        )
+
+        if(response.success) {
+          const favorites = response.data.results.filter((p) => {
+            const id = parseInt(p.url.split("/")[6])
+            return pokemons.includes(id)
+          })
+          const detailedPokemons = await Promise.all(
+            favorites.map(async (p) => {
+              const details = await requestData(p.url, "GET")
+              return {
+                id: details.data.id,
+                name: details.data.name,
+                sprite: details.data.sprites.front_default,
+                animated: details.data.sprites.front_default,
+                types: details.data.types.map((t) => t.type.name),
+              }
+            })
+          )
+          setPokemonsFavoritos(detailedPokemons)
+          console.log(detailedPokemons)
+        }
+
+      } catch (error) {
+        console.error("Erro ao buscar pokemons:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchPokemons()
+  }, [pokemons])
 
   function handleChange(event) {
     setUser({ ...user, [event.target.name]: event.target.value })

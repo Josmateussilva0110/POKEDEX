@@ -8,7 +8,6 @@ export default function useAuth() {
   const navigate = useNavigate()
   const { setFlashMessage } = useFlashMessage()
 
-  // Estado inicial com proteção contra JSON inválido
   const [authenticated, setAuthenticated] = useState(() => {
     try {
       const token = localStorage.getItem('token')
@@ -36,16 +35,13 @@ export default function useAuth() {
 
   const [loading, setLoading] = useState(true)
 
-  // Desliga o loading após a primeira renderização
   useEffect(() => {
     setLoading(false)
   }, [])
 
-  // 🔑 Login/registro bem-sucedido
   async function authUser(data) {
     setAuthenticated(true)
 
-    // Aqui garantimos que "data.user" existe
     const userData = data.user || { id: data.userId, name: data.name }
 
     setUser(userData)
@@ -56,7 +52,6 @@ export default function useAuth() {
     navigate('/')
   }
 
-  // 📌 Registrar
   async function register(user) {
     const response = await requestData('/user/register', 'POST', user)
     if (response.success) {
@@ -67,7 +62,6 @@ export default function useAuth() {
     }
   }
 
-  // 📌 Login
   async function login(user) {
     const response = await requestData('/user/login', 'POST', user)
     if (response.success) {
@@ -78,7 +72,6 @@ export default function useAuth() {
     }
   }
 
-  // 📌 Logout
   function logout() {
     setAuthenticated(false)
     setUser(null)
@@ -89,7 +82,6 @@ export default function useAuth() {
     setFlashMessage('Logout realizado com sucesso', 'success')
   }
 
-  // 📌 Atualizar usuário
   async function updateUser(user_id, userData, token) {
     const formData = new FormData()
 
@@ -107,7 +99,6 @@ export default function useAuth() {
 
     if (response.success) {
       console.log('updated: ',response)
-      // 🔥 Atualiza o contexto e localStorage com o usuário atualizado
       setUser(response.data.user)
       localStorage.setItem('user', JSON.stringify(response.data.user))
     }
