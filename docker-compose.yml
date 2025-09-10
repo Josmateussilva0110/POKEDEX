@@ -8,6 +8,7 @@ services:
       POSTGRES_USER: ${USER}
       POSTGRES_PASSWORD: ${PASSWORD}
       POSTGRES_DB: ${DATABASE}
+      TZ: America/Sao_Paulo
     ports:
       - "5432:5432"
     volumes:
