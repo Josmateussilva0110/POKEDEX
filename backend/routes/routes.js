@@ -29,6 +29,7 @@ router.patch('/user/:id', verifyToken, (request, response, next) => {
 
 router.post('/pokemon', verifyToken, PokemonController.addFavorite)
 router.get('/pokemons/:user_id', verifyToken, PokemonController.getPokemons)
+router.delete('/pokemon/:pokemon_id', verifyToken, PokemonController.remove)
 
 
 module.exports = router

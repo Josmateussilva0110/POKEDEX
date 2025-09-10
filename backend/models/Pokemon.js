@@ -42,6 +42,16 @@ class Pokemon {
             return false
         }
     }
+
+    async delete(pokemon_id) {
+        try {
+            await knex("pokemons_favorites").where({pokemon_id: pokemon_id}).del()
+            return true
+        } catch(err) {
+            console.log('Erro ao retirar o pokemon dos favoritos.', err)
+            return false
+        }
+    }
 }
 
 module.exports = new Pokemon()

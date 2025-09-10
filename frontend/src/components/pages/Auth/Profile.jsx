@@ -7,6 +7,7 @@ import ImageUpload from "../../form/ImageUpload"
 import { Context } from "../../../context/UserContext"
 import styles from "../../pages/Auth/styles/Home.module.css"
 import Colors from "../global_css/Colors.module.css"
+import ConfirmModal from "../../form/ConfirmModal"
 
 function Profile() {
   const [activeTab, setActiveTab] = useState("edit") // aba inicial
@@ -15,6 +16,8 @@ function Profile() {
   const [loading, setLoading] = useState(true)
   const [pokemons, setPokemons] = useState([])
   const [pokemonsFavoritos, setPokemonsFavoritos] = useState([])
+  const [modalOpen, setModalOpen] = useState(false)
+  const [selectedPokemon, setSelectedPokemon] = useState(null)
   const [token] = useState(() => {
     const storedToken = localStorage.getItem('token')
     return storedToken ? JSON.parse(storedToken) : null
@@ -106,6 +109,34 @@ function Profile() {
     })
   }
 
+  // abrir modal para confirmar deleção
+  const handleFavoriteClick = (p) => {
+    setSelectedPokemon(p)
+    setModalOpen(true)
+  }
+
+
+  const removePokemon = async () => {
+    if (selectedPokemon) {
+        const response = await requestData(
+          `/pokemon/${selectedPokemon.id}`, 
+          "DELETE", 
+          null,
+          token
+        )
+        if(response.success) {
+          setFlashMessage(response.data.message, 'success')
+          setPokemonsFavoritos((prev) =>
+            prev.filter((p) => p.id !== selectedPokemon.id)
+          )
+        }
+        else {
+          setFlashMessage(response.message, 'error')
+        }
+    }
+    setModalOpen(false)
+  }
+
   async function submitForm(event) {
     event.preventDefault()
     let msgType = 'success'
@@ -119,6 +150,9 @@ function Profile() {
       setFlashMessage(response.message, msgType)
     }
   }
+
+
+
 
   return (
     <>
@@ -217,7 +251,7 @@ function Profile() {
                       <div
                         key={p.id}
                         className={styles.card}
-                        onClick={() => navigate(`pokemon/detail/${p.id}`)}
+                        onClick={() => handleFavoriteClick(p)}
                       >
                         <Image
                           src={p.animated || p.sprite}
@@ -245,6 +279,14 @@ function Profile() {
           )}
         </div>
       </div>
+    {/* Modal de confirmação */}
+    <ConfirmModal 
+      isOpen={modalOpen}
+      onClose={() => setModalOpen(false)}
+      onConfirm={removePokemon}
+      title="Confirmar favorito"
+      message={`Deseja retirar o pokemon ${selectedPokemon?.name} dos seus favoritos?`}
+    />
     </>
   )
 

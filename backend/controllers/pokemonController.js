@@ -38,6 +38,24 @@ class PokemonController {
         }
         return response.status(200).json({status: true, pokemons})
     }
+
+    async remove(request, response) {
+        const { pokemon_id } = request.params
+        if (!validator.isInt(pokemon_id + '', { min: 1 })) {
+            return response.status(422).json({status: false, message: 'Pokemon invalido.'})
+        }
+        
+        const pokemonExist = await Pokemon.pokemonExists(pokemon_id)
+        if(!pokemonExist) {
+            return response.status(404).json({status: false, message: "Pokemon não encontrado."})
+        }
+        const valid = await Pokemon.delete(pokemon_id)
+        if(!valid) {
+            return response.status(500).json({status: false, message: "Erro ao retirar pokemon dos favoritos."})
+        }
+        return response.status(200).json({status: true, message: "Pokemon removido com sucesso."})
+
+    }
 }
 
 module.exports = new PokemonController()
