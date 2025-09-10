@@ -24,8 +24,8 @@ function Home() {
   const navigate = useNavigate()
   const pokemonsPerPage = 20 
 
-  const startId = 387
-  const endId = 493
+  const startId = 494
+  const endId = 600
 
   useEffect(() => {
     async function fetchPokemons() {

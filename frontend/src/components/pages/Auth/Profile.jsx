@@ -46,10 +46,19 @@ function Profile() {
 
   useEffect(() => {
     async function fetchFavoritesPokemons() {
+      let ids = []
       const response = await requestData(`/pokemons/${user_id.id}`, 'GET', null, token)
       if (response.success) {
-        const ids = response.data.pokemons.map(p => p.pokemon_id)
+        ids = response.data.pokemons.map(p => p.pokemon_id)
         setPokemons(ids)
+      }
+
+      if(ids.length === 0) {
+        setLoading(false)
+      }
+
+      else {
+        setLoading(false)
       }
     }
     fetchFavoritesPokemons()
@@ -244,36 +253,29 @@ function Profile() {
 
               {loading ? (
                 <p>Carregando Pokémons...</p>
+              ) : pokemonsFavoritos.length === 0 ? (
+                <p>Não há pokémons adicionados aos favoritos.</p>
               ) : (
-                <>
-                  <div className={styles.grid}>
-                    {pokemonsFavoritos.map((p) => (
-                      <div
-                        key={p.id}
-                        className={styles.card}
-                        onClick={() => handleFavoriteClick(p)}
-                      >
-                        <Image
-                          src={p.animated || p.sprite}
-                          alt={p.name}
-                          size={130}
-                        />
-                        <div className={styles.pokemonId}>#{p.id}</div>
-                        <div className={styles.pokemonName}>{p.name}</div>
-                        <div className={styles.types}>
-                          {p.types.map((type) => (
-                            <span
-                              key={type}
-                              className={`${Colors.type} ${Colors[type]}`}
-                            >
-                              {type}
-                            </span>
-                          ))}
-                        </div>
+                <div className={styles.grid}>
+                  {pokemonsFavoritos.map((p) => (
+                    <div
+                      key={p.id}
+                      className={styles.card}
+                      onClick={() => handleFavoriteClick(p)}
+                    >
+                      <Image src={p.animated || p.sprite} alt={p.name} size={130} />
+                      <div className={styles.pokemonId}>#{p.id}</div>
+                      <div className={styles.pokemonName}>{p.name}</div>
+                      <div className={styles.types}>
+                        {p.types.map((type) => (
+                          <span key={type} className={`${Colors.type} ${Colors[type]}`}>
+                            {type}
+                          </span>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                </>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           )}
