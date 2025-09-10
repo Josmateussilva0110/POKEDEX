@@ -2,7 +2,7 @@ const express = require("express")
 const router = express.Router()
 const UserController = require("../controllers/userController")
 const PokemonController = require("../controllers/pokemonController")
-const verifyToken = require("../middleware/verifyToken")
+const checkSession = require("../middleware/verifyToken")
 const imageUpload = require("../middleware/image_upload")
 const checkImage = require("../middleware/verifyImage")
 
@@ -12,9 +12,11 @@ const checkImage = require("../middleware/verifyImage")
 router.post('/user/register', UserController.register)
 router.post('/user/login', UserController.login)
 router.get('/user/check_user', UserController.checkUser)
+router.get('/user/session', UserController.session)
 router.get('/user/:id', UserController.getUserById)
+router.post('/user/logout', UserController.logout)
 
-router.patch('/user/:id', verifyToken, (request, response, next) => {
+router.patch('/user/:id', checkSession, (request, response, next) => {
     imageUpload.single('photo')(request, response, function (err) {
         if(err) {
             // evitar que a imagem suba no servidor
@@ -27,9 +29,9 @@ router.patch('/user/:id', verifyToken, (request, response, next) => {
 
 // rotas para pokemons
 
-router.post('/pokemon', verifyToken, PokemonController.addFavorite)
-router.get('/pokemons/:user_id', verifyToken, PokemonController.getPokemons)
-router.delete('/pokemon/:pokemon_id', verifyToken, PokemonController.remove)
+router.post('/pokemon', checkSession, PokemonController.addFavorite)
+router.get('/pokemons/:user_id', checkSession, PokemonController.getPokemons)
+router.delete('/pokemon/:pokemon_id', checkSession, PokemonController.remove)
 
 
 module.exports = router

@@ -13,8 +13,7 @@ function Home() {
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const [favorites, setFavorites] = useState([])
-  const [token] = useState(() => JSON.parse(localStorage.getItem('token')))
-  const [user] = useState(() => JSON.parse(localStorage.getItem('user')))
+  const [user, setUser] = useState(null)
   const { setFlashMessage } = useFlashMessage()
 
   // modal
@@ -24,9 +23,24 @@ function Home() {
   const navigate = useNavigate()
   const pokemonsPerPage = 20 
 
-  const startId = 494
-  const endId = 600
+  const startId = 650
+  const endId = 721
 
+  // busca sessão do usuário
+  useEffect(() => {
+    async function fetchSession() {
+      const response = await requestData("/user/session", "GET", {}, true)
+      console.log('response sessão home: ', response)
+      if (response.success) {
+        setUser(response.data.user)
+      } else {
+        setUser(null)
+      }
+    }
+    fetchSession()
+  }, [])
+
+  // busca pokémons
   useEffect(() => {
     async function fetchPokemons() {
       try {
@@ -37,7 +51,7 @@ function Home() {
           { limit: 1000, offset: 0 }
         )
 
-        if(response.success) {
+        if (response.success) {
           const sinnohPokemons = response.data.results.filter((p) => {
             const id = parseInt(p.url.split("/")[6])
             return id >= startId && id <= endId
@@ -55,14 +69,21 @@ function Home() {
               }
             })
           )
-          if(user) {
-            const pokemonsIds = await requestData(`/pokemons/${user.id}`, 'GET', null, token)
-            console.log(pokemonsIds)
-            if(pokemonsIds.success) {
-              const ids = pokemonsIds.data.pokemons.map(p => p.pokemon_id)
-              setFavorites(ids) 
+
+          // se usuário está logado, busca favoritos dele
+          if (user) {
+            const pokemonsIds = await requestData(
+              `/pokemons/${user.id}`,
+              "GET",
+              {},
+              true
+            )
+            if (pokemonsIds.success) {
+              const ids = pokemonsIds.data.pokemons.map((p) => p.pokemon_id)
+              setFavorites(ids)
             }
           }
+
           setPokemon(detailedPokemons)
         }
       } catch (error) {
@@ -73,7 +94,7 @@ function Home() {
     }
 
     fetchPokemons()
-  }, [])
+  }, [user])
 
   // abrir modal para confirmar favorito
   const handleFavoriteClick = (p) => {
@@ -83,27 +104,25 @@ function Home() {
 
   // confirmar favorito (chama backend aqui)
   const confirmFavorite = async () => {
-    const formData = {}
-    formData.pokemon_id = selectedPokemon.id
-    formData.user_id = user.id
-    if (selectedPokemon) {
-        // exemplo de chamada para o backend
-        const response = await requestData(
-          "/pokemon", 
-          "POST", 
-          formData,
-          token
-        )
-        if(response.success) {
-          setFlashMessage(response.data.message, 'success')
-        }
-        else {
-          setFlashMessage(response.message, 'error')
-        }
-        //console.log(response.data)
-        // atualiza localmente
-        setFavorites((prev) => [...prev, selectedPokemon.id])
+    if (!user) {
+      setFlashMessage("Você precisa estar logado para favoritar.", "error")
+      setModalOpen(false)
+      return
     }
+
+    const formData = {
+      pokemon_id: selectedPokemon.id,
+      user_id: user.id,
+    }
+
+    const response = await requestData("/pokemon", "POST", formData, true)
+    if (response.success) {
+      setFlashMessage(response.data.message, "success")
+      setFavorites((prev) => [...prev, selectedPokemon.id])
+    } else {
+      setFlashMessage(response.message, "error")
+    }
+
     setModalOpen(false)
   }
 

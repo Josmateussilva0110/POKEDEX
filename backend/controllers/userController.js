@@ -53,28 +53,37 @@ class UserController {
     }
 
     async login(request, response) {
-        const {email, password} = request.body
-        const error = FieldValidator.validate({
-            email,
-            password
-        })
+        const { email, password } = request.body
 
-        if (error) {
-            return response.status(422).json({ status: false, message: error })
-        }
+        const error = FieldValidator.validate({ email, password })
+        if (error) return response.status(422).json({ status: false, message: error })
 
         const user = await User.findByEmail(email)
-        if(!user) {
-            return response.status(404).json({status: false, message: "Email não encontrado."})
-        }
+        if (!user) return response.status(404).json({ status: false, message: "Email não encontrado." })
+
         const checkPassword = await bcrypt.compare(password, user.password)
-        if(!checkPassword) {
-            response.status(422).json({status: false, message: "Senha incorreta."})
-            return 
-        } 
-        // done
-        return await userToken(user, request, response)
+        if (!checkPassword) return response.status(422).json({ status: false, message: "Senha incorreta." })
+
+        request.session.user = { id: user.id, name: user.name}
+
+        return response.status(200).json({
+            success: true,
+            message: "Login feito com sucesso",
+            user: { id: user.id, name: user.name }
+        })
     }
+
+
+    async logout(request, response) {
+        request.session.destroy(err => {
+            if (err) {
+                return response.status(500).json({ success: false, message: "Erro ao sair" })
+            }
+            response.clearCookie('connect.sid')
+            return response.status(200).json({ success: true, message: "Logout feito com sucesso" })
+        })
+    }
+
 
     async checkUser(request, response) {
         let currentUser
@@ -144,6 +153,15 @@ class UserController {
             return response.status(500).json({status: false, message: err})
         }
     }
+
+    async session(request, response) {
+        if (request.session && request.session.user) {
+            return response.status(200).json({ success: true, user: request.session.user })
+        } else {
+            return response.status(401).json({ success: false, message: "Usuário não logado" })
+        }
+    }
+
 
 }
 

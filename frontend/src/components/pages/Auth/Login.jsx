@@ -11,7 +11,6 @@ function Login() {
   }
 
   async function submitForm(e) {
-    console.log('user: ',user)
     e.preventDefault()
     login(user)
   }

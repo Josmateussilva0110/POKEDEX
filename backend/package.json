@@ -3,19 +3,21 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-  "dev": "nodemon index.js --watch . --ext js,json",
-  "start": "node index.js",
-  "migrate": "knex migrate:latest --knexfile knexfile.js"
+    "dev": "nodemon index.js --watch . --ext js,json",
+    "start": "node index.js",
+    "migrate": "knex migrate:latest --knexfile knexfile.js"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "connect-pg-simple": "^10.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
+    "express-session": "^1.18.2",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "knex": "^3.1.0",
