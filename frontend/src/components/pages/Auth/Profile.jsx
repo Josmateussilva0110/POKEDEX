@@ -22,11 +22,18 @@ function Profile() {
 
   // Pega os dados do usuário da sessão
   useEffect(() => {
-    console.log('context user: ', contextUser)
     if (contextUser) {
-      setUser(contextUser)
+      async function fetchUser() {
+        const response = await requestData(`user/${contextUser.id}`)
+        if(response.status) {
+          setUser(response.data.user)
+        }
+      }
+      fetchUser()
     }
   }, [contextUser])
+
+
 
   // Pega os pokémons favoritos
   useEffect(() => {
@@ -137,7 +144,7 @@ function Profile() {
             {(user.photo || preview) && (
               <div className="flex justify-center mb-6">
                 <Image
-                  src={preview ? URL.createObjectURL(preview) : `${import.meta.env.VITE_API_URL}/images/users/${user.photo}`}
+                  src={preview ? URL.createObjectURL(preview) : `${import.meta.env.VITE_API_URL}images/users/${user.photo}`}
                   alt={user.name}
                   size={100}
                 />

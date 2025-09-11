@@ -1,12 +1,28 @@
 import { Link } from 'react-router-dom'
-import { useContext, useState } from 'react'
+import { useContext, useState, useEffect } from 'react'
 import { Context } from '../../context/UserContext'
 import { ChevronDown } from 'lucide-react'
 import Image from '../form/Image'
+import requestData from '../../utils/requestApi'
 
 function Navbar() {
   const { authenticated, contextUser, logout, loading } = useContext(Context)
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [user, setUser] = useState({})
+
+  useEffect(() => {
+    if (contextUser) {
+      async function fetchUser() {
+        const response = await requestData(`user/${contextUser.id}`, 'GET')
+        if(response.status) {
+          setUser(response.data.user)
+        }
+      }
+      fetchUser()
+    }
+  }, [contextUser])
+
+  console.log('user navbar: ',user)
 
   if (loading) return null
 
@@ -26,10 +42,10 @@ function Navbar() {
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className="flex items-center gap-2 text-yellow-400 hover:text-yellow-600 font-medium"
             >
-              {contextUser?.photo ? (
-                <Image src={`${import.meta.env.VITE_API_URL}/images/users/${contextUser.photo}`} alt={contextUser?.name} size={50}/>
+              {user?.photo ? (
+                <Image src={`${import.meta.env.VITE_API_URL}images/users/${user.photo}`} alt={user?.name} size={55}/>
               ) : (
-                <span>Olá, {contextUser?.name}</span>
+                <span>Olá, {user?.name}</span>
               )}
               <ChevronDown className={`w-4 h-4 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
             </button>

@@ -34,7 +34,7 @@ class PokemonController {
 
         const pokemons = await Pokemon.getPokemonsIds(user_id)
         if(!pokemons) {
-            return response.status(404).json({status: false, message: "nenhum pokemon encontrado."})
+            return response.status(200).json({status: true, message: "nenhum pokemon encontrado.", pokemons: []})
         }
         return response.status(200).json({status: true, pokemons})
     }
