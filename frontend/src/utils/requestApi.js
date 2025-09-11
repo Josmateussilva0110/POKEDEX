@@ -38,6 +38,10 @@ async function requestData(endpoint, method = 'get', data = {}, withCredentials 
       message: response.data.message
     }
   } catch (err) {
+    if (err.response?.status === 401) {
+      // dispara evento global
+      window.dispatchEvent(new Event('SESSION_EXPIRED'))
+    }
     return {
       success: false,
       status: err.response?.status || 500,

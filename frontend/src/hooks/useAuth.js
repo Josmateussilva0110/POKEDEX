@@ -86,5 +86,11 @@ export default function useAuth() {
     return response
   }
 
-  return { authenticated, contextUser, loading, login, register, logout, updateUser }
+  function localLogout() {
+    setAuthenticated(false)
+    setUser(null)
+  }
+
+
+  return { authenticated, contextUser, loading, login, register, logout, updateUser, localLogout }
 }

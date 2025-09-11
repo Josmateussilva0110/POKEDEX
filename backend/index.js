@@ -29,23 +29,48 @@ app.use(
 )
 
 
-app.use(
+/*app.use(
   session({
     store: new pgSession({
       pool: pgPool,
       tableName: "session",
+      ttl: 7200, // 2 horas em segundos
+      pruneSessionInterval: 60, 
     }),
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24, // 1 dia
+      maxAge: 1000 * 60 * 60 * 2, // 2 horas em ms
       secure: false, // true se usar https
       httpOnly: true,
-      sameSite: "lax", // pode ser 'strict' ou 'none' (se usar https)
+      sameSite: "lax",
+    },
+  })
+)*/
+
+
+//debug teste 
+app.use(
+  session({
+    store: new pgSession({
+      pool: pgPool,
+      tableName: "session",
+      ttl: 30,
+      pruneSessionInterval: 30, 
+    }),
+    secret: process.env.SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 1000 * 30, // 50 segundos
+      secure: false, // true se usar https
+      httpOnly: true,
+      sameSite: "lax",
     },
   })
 )
+
 
 app.use("/", router)
 

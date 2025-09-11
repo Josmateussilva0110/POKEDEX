@@ -163,7 +163,7 @@ class UserController {
         if (request.session && request.session.user) {
             return response.status(200).json({ success: true, user: request.session.user })
         } else {
-            return response.status(401).json({ success: false, message: "Usuário não logado" })
+            return response.status(401).json({ success: false, message: "Usuário não autenticado" })
         }
     }
 

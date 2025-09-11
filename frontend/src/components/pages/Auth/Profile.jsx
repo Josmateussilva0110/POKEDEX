@@ -10,42 +10,40 @@ import Colors from "../global_css/Colors.module.css"
 import ConfirmModal from "../../form/ConfirmModal"
 
 function Profile() {
-  const { contextUser, updateUser } = useContext(Context)
+  const { user, updateUser, setUser } = useContext(Context)
   const [activeTab, setActiveTab] = useState("edit")
-  const [user, setUser] = useState({})
   const [preview, setPreview] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [previewUrl, setPreviewUrl] = useState(null)
+  const [loadingFavorites, setLoadingFavorites] = useState(true)
   const [pokemonsFavoritos, setPokemonsFavoritos] = useState([])
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedPokemon, setSelectedPokemon] = useState(null)
+  const [saving, setSaving] = useState(false)
   const { setFlashMessage } = useFlashMessage()
 
-  // Pega os dados do usuário da sessão
+  // Atualiza URL do preview com cleanup
   useEffect(() => {
-    if (contextUser) {
-      async function fetchUser() {
-        const response = await requestData(`user/${contextUser.id}`)
-        if(response.status) {
-          setUser(response.data.user)
-        }
-      }
-      fetchUser()
+    if (!preview) {
+      setPreviewUrl(null)
+      return
     }
-  }, [contextUser])
-
-
+    const objectUrl = URL.createObjectURL(preview)
+    setPreviewUrl(objectUrl)
+    return () => URL.revokeObjectURL(objectUrl)
+  }, [preview])
 
   // Pega os pokémons favoritos
   useEffect(() => {
     async function fetchFavorites() {
       if (!user?.id) return
-      setLoading(true)
+      setLoadingFavorites(true)
+
       const response = await requestData(`/pokemons/${user.id}`, 'GET', {}, true)
       if (response.success) {
         const ids = response.data.pokemons.map(p => p.pokemon_id)
         if (ids.length === 0) {
           setPokemonsFavoritos([])
-          setLoading(false)
+          setLoadingFavorites(false)
           return
         }
 
@@ -70,7 +68,7 @@ function Profile() {
       } else {
         setFlashMessage(response.message, 'error')
       }
-      setLoading(false)
+      setLoadingFavorites(false)
     }
 
     fetchFavorites()
@@ -91,12 +89,14 @@ function Profile() {
     event.preventDefault()
     if (!user?.id) return
 
+    setSaving(true)
     const response = await updateUser(user.id, user)
     if (response.success) {
       setFlashMessage(response.data.message, 'success')
     } else {
       setFlashMessage(response.message, 'error')
     }
+    setSaving(false)
   }
 
   // Remover pokémon favorito
@@ -144,7 +144,7 @@ function Profile() {
             {(user.photo || preview) && (
               <div className="flex justify-center mb-6">
                 <Image
-                  src={preview ? URL.createObjectURL(preview) : `${import.meta.env.VITE_API_URL}images/users/${user.photo}`}
+                  src={previewUrl || `${import.meta.env.VITE_API_URL}images/users/${user.photo}`}
                   alt={user.name}
                   size={100}
                 />
@@ -154,14 +154,16 @@ function Profile() {
               <Input text="Seu Nome" type="text" name="name" handleOnChange={handleChange} value={user.name || ""}/>
               <Input text="Seu Email" type="text" name="email" handleOnChange={handleChange} value={user.email || ""}/>
               <ImageUpload onFileChange={onFileChange} />
-              <button type="submit" className="w-full py-2 px-4 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700">Editar</button>
+              <button type="submit" disabled={saving} className="w-full py-2 px-4 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700">
+                {saving ? "Salvando..." : "Editar"}
+              </button>
             </form>
           </div>
         )}
 
         {activeTab === "favorites" && (
           <div className={styles.container}>
-            {loading ? (
+            {loadingFavorites ? (
               <p>Carregando Pokémons...</p>
             ) : pokemonsFavoritos.length === 0 ? (
               <p>Não há pokémons adicionados aos favoritos.</p>
