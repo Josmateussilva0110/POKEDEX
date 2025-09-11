@@ -17,6 +17,22 @@ class Pokemon {
         }
     }
 
+
+    async findPokemonByIdUser(user_id, pokemon_id) {
+        try {
+            const result = await knex.select("*").where({pokemon_id: pokemon_id}).andWhere({user_id: user_id}).table("pokemons_favorites")
+            if(result.length > 0) {
+                return true
+            }
+            else {
+                return false
+            }
+        } catch(err) {
+            console.log('erro ao buscar pokemon', err)
+            return false
+        }
+    }
+
     async getPokemonsIds(user_id) {
         try {
             const result = await knex.select("pokemon_id").where({user_id}).table("pokemons_favorites")
@@ -28,6 +44,21 @@ class Pokemon {
             }
         } catch(err) {
             console.log('erro ao buscar ids de pokemons', err)
+            return undefined
+        }
+    }
+
+    async findById(id) {
+        try {
+            var result = await knex.select(["user_id", "pokemon_id"]).where({pokemon_id: id}).table("pokemons_favorites")
+            if(result.length > 0) {
+                return result[0]
+            }
+            else {
+                return undefined
+            }
+        } catch(err) {
+            console.log('erro em buscar pokémon por id: ', err)
             return undefined
         }
     }
