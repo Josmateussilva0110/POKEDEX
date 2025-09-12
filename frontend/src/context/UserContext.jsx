@@ -1,50 +1,46 @@
 import { createContext, useState, useEffect } from "react"
-import useAuth from "../hooks/useAuth"
 import requestData from "../utils/requestApi"
+import useAuth from "../hooks/useAuth"
 
 const Context = createContext()
 
 export function UserProvider({ children }) {
-  const [sessionExpired, setSessionExpired] = useState(false)
+  const [authenticated, setAuthenticated] = useState(false)
   const [user, setUser] = useState(null)
-  const { authenticated, contextUser, register, login, logout, updateUser, localLogout } = useAuth()
+  const [loading, setLoading] = useState(true)
+  const [sessionExpired, setSessionExpired] = useState(false)
 
-  // Verifica a sessão no mount
+  const { login, register, logout, updateUser, localLogout } = useAuth({ setAuthenticated, setUser })
+
   useEffect(() => {
-    async function fetchSession() {
+    async function checkSession() {
       const response = await requestData("/user/session", "GET", {}, true)
-      if (!response.success) {
-        setSessionExpired(true)
-        localLogout() // aqui já garante authenticated = false
+      if (response.success) {
+        setAuthenticated(true)
+        setUser(response.data.user)
+      } else {
+        setAuthenticated(false)
         setUser(null)
+        setSessionExpired(true)
       }
+      setLoading(false)
     }
-    fetchSession()
-  }, [localLogout])
+    checkSession()
+  }, [])
 
-  // Atualiza usuário quando contextUser mudar
-  useEffect(() => {
-    if (contextUser) {
-      async function fetchUser() {
-        const response = await requestData(`/user/${contextUser.id}`, "GET", {}, true)
-        console.log("user response: ", response)
-        if (response.success) {
-          setUser(response.data.user)
-        }
-      }
-      fetchUser()
-    } else {
-      setUser(null)
-    }
-  }, [contextUser])
-
-  // Ouve evento de sessão expirada
+  
   useEffect(() => {
     function handleExpired() {
       setSessionExpired(true)
-      localLogout() // authenticated = false
-      setUser(null)
+      setUser(prev => {
+        if (prev) {
+          setAuthenticated(false)
+          return null
+        }
+        return prev
+      })
     }
+
 
     window.addEventListener("SESSION_EXPIRED", handleExpired)
     return () => window.removeEventListener("SESSION_EXPIRED", handleExpired)
@@ -53,15 +49,16 @@ export function UserProvider({ children }) {
   return (
     <Context.Provider
       value={{
-        authenticated, // controla login/logout
-        user,          // dados do usuário
-        register,
+        authenticated,
+        user,
+        loading,
+        sessionExpired,
+        setSessionExpired,
         login,
+        register,
         logout,
         updateUser,
-        sessionExpired, // só para exibir mensagem, não para Navbar
-        setSessionExpired,
-        localLogout
+        localLogout,
       }}
     >
       {children}

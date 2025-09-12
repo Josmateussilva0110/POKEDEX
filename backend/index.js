@@ -29,7 +29,7 @@ app.use(
 )
 
 
-/*app.use(
+app.use(
   session({
     store: new pgSession({
       pool: pgPool,
@@ -47,11 +47,11 @@ app.use(
       sameSite: "lax",
     },
   })
-)*/
+)
 
 
 //debug teste 
-app.use(
+/*app.use(
   session({
     store: new pgSession({
       pool: pgPool,
@@ -69,7 +69,7 @@ app.use(
       sameSite: "lax",
     },
   })
-)
+)*/
 
 
 app.use("/", router)

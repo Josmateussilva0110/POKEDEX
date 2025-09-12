@@ -1,13 +1,31 @@
 import { Link } from 'react-router-dom'
-import { useContext, useState } from 'react'
+import { useContext, useState, useEffect} from 'react'
 import { Context } from '../../context/UserContext'
 import { ChevronDown } from 'lucide-react'
 import Image from '../form/Image'
+import requestData from '../../utils/requestApi'
 
 
 function Navbar() {
   const { authenticated, logout, user } = useContext(Context)
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [requestUser, setRequestUser] = useState(null)
+
+  console.log('user navBar: ', user)
+
+
+  useEffect(() => {
+    async function fetchUser() {
+      const response = await requestData(`/user/${user.id}`, "GET", {}, true)
+      console.log('response navBar: ', response)
+      if (response.success) {
+        setRequestUser(response.data.user)
+      } else {
+        setUser(null)
+      }
+    }
+    fetchUser()
+  }, [user])
 
   return (
     <nav className="bg-red-800 shadow-md px-6 py-4 flex justify-between items-center">
