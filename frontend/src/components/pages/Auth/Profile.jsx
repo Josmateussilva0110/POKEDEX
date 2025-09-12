@@ -19,9 +19,9 @@ function Profile() {
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedPokemon, setSelectedPokemon] = useState(null)
   const [saving, setSaving] = useState(false)
+  const [userEdit, setUserEdit] = useState({})
   const { setFlashMessage } = useFlashMessage()
 
-  // Atualiza URL do preview com cleanup
   useEffect(() => {
     if (!preview) {
       setPreviewUrl(null)
@@ -74,15 +74,30 @@ function Profile() {
     fetchFavorites()
   }, [user])
 
+
+  useEffect(() => {
+    if(user) {
+      async function fetchUser() {
+        const response = await requestData(`/user/${user.id}`, 'GET', {}, true)
+        if(response.status) {
+          setUserEdit(response.data.user)
+        } else {
+          setUserEdit(null)
+        }
+      }
+      fetchUser()
+    }
+  }, [user])
+
   // Form handlers
   function handleChange(event) {
-    setUser({ ...user, [event.target.name]: event.target.value })
+    setUserEdit({ ...userEdit, [event.target.name]: event.target.value })
   }
 
   function onFileChange(event) {
     const file = event.target.files[0]
     setPreview(file)
-    setUser(prev => ({ ...prev, [event.target.name]: file }))
+    setUserEdit(prev => ({ ...prev, [event.target.name]: file }))
   }
 
   async function submitForm(event) {
@@ -90,7 +105,7 @@ function Profile() {
     if (!user?.id) return
 
     setSaving(true)
-    const response = await updateUser(user.id, user)
+    const response = await updateUser(userEdit.id, userEdit)
     if (response.success) {
       setFlashMessage(response.data.message, 'success')
     } else {
@@ -141,18 +156,18 @@ function Profile() {
         {/* Conteúdo das abas */}
         {activeTab === "edit" && (
           <div className="w-full max-w-md bg-white shadow-2xl rounded-2xl p-8">
-            {(user.photo || preview) && (
+            {(userEdit.photo || preview) && (
               <div className="flex justify-center mb-6">
                 <Image
-                  src={previewUrl || `${import.meta.env.VITE_API_URL}images/users/${user.photo}`}
-                  alt={user.name}
+                  src={previewUrl || `${import.meta.env.VITE_API_URL}images/users/${userEdit.photo}`}
+                  alt={userEdit.name}
                   size={100}
                 />
               </div>
             )}
             <form onSubmit={submitForm} className="space-y-5">
-              <Input text="Seu Nome" type="text" name="name" handleOnChange={handleChange} value={user.name || ""}/>
-              <Input text="Seu Email" type="text" name="email" handleOnChange={handleChange} value={user.email || ""}/>
+              <Input text="Seu Nome" type="text" name="name" handleOnChange={handleChange} value={userEdit.name || ""}/>
+              <Input text="Seu Email" type="text" name="email" handleOnChange={handleChange} value={userEdit.email || ""}/>
               <ImageUpload onFileChange={onFileChange} />
               <button type="submit" disabled={saving} className="w-full py-2 px-4 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700">
                 {saving ? "Salvando..." : "Editar"}

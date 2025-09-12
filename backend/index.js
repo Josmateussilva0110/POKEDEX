@@ -50,20 +50,20 @@ app.use(
 )
 
 
-//debug teste 
-/*app.use(
+/*//debug teste 
+app.use(
   session({
     store: new pgSession({
       pool: pgPool,
       tableName: "session",
-      ttl: 30,
-      pruneSessionInterval: 30, 
+      ttl: 40,
+      pruneSessionInterval: 40, 
     }),
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-      maxAge: 1000 * 30, // 50 segundos
+      maxAge: 1000 * 40, // 50 segundos
       secure: false, // true se usar https
       httpOnly: true,
       sameSite: "lax",

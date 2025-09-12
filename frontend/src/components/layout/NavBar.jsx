@@ -11,20 +11,19 @@ function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [requestUser, setRequestUser] = useState(null)
 
-  console.log('user navBar: ', user)
-
 
   useEffect(() => {
-    async function fetchUser() {
-      const response = await requestData(`/user/${user.id}`, "GET", {}, true)
-      console.log('response navBar: ', response)
-      if (response.success) {
-        setRequestUser(response.data.user)
-      } else {
-        setUser(null)
+    if(user) {
+      async function fetchUser() {
+        const response = await requestData(`/user/${user.id}`, "GET", {}, true)
+        if (response.success) {
+          setRequestUser(response.data.user)
+        } else {
+          setUser(null)
+        }
       }
-    }
-    fetchUser()
+      fetchUser()
+      }
   }, [user])
 
   return (
@@ -43,10 +42,10 @@ function Navbar() {
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className="flex items-center gap-2 text-yellow-400 hover:text-yellow-600 font-medium"
             >
-              {user?.photo ? (
-                <Image src={`${import.meta.env.VITE_API_URL}images/users/${user.photo}`} alt={user?.name} size={55}/>
+              {requestUser?.photo ? (
+                <Image src={`${import.meta.env.VITE_API_URL}images/users/${requestUser.photo}`} alt={requestUser?.name} size={55}/>
               ) : (
-                <span>Olá, {user?.name}</span>
+                <span>Olá, {requestUser?.name}</span>
               )}
               <ChevronDown className={`w-4 h-4 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
             </button>
