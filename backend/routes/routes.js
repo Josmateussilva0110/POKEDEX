@@ -11,7 +11,6 @@ const checkImage = require("../middleware/verifyImage")
 // rotas para usuário
 router.post('/user/register', UserController.register)
 router.post('/user/login', UserController.login)
-router.get('/user/check_user', UserController.checkUser)
 router.get('/user/session', UserController.session)
 router.get('/user/:id', UserController.getUserById)
 router.post('/user/logout', UserController.logout)

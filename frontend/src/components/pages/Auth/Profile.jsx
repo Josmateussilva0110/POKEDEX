@@ -10,7 +10,7 @@ import Colors from "../global_css/Colors.module.css"
 import ConfirmModal from "../../form/ConfirmModal"
 
 function Profile() {
-  const { user, updateUser, setUser } = useContext(Context)
+  const { user, updateUser } = useContext(Context)
   const [activeTab, setActiveTab] = useState("edit")
   const [preview, setPreview] = useState(null)
   const [previewUrl, setPreviewUrl] = useState(null)

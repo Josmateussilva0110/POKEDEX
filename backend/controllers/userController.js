@@ -1,9 +1,6 @@
 const User = require("../models/User")
 const bcrypt = require("bcrypt")
 const userToken = require("../utils/userToken")
-const getToken = require("../utils/getToken")
-const jwt = require("jsonwebtoken")
-const getUserAndToken = require("../utils/getUserAndToken")
 const FieldValidator = require("../utils/userValidator")
 require('dotenv').config({ path: '../.env' })
 
@@ -84,22 +81,6 @@ class UserController {
         })
     }
 
-
-    async checkUser(request, response) {
-        let currentUser
-        //console.log(request.headers.authorization)
-        if(request.headers.authorization) {
-            const token = getToken(request)
-            const decoded = jwt.verify(token, process.env.SECRET)
-            currentUser = await User.findById(decoded.id)
-            currentUser.password = undefined
-        }
-        else {
-            currentUser = null
-        }
-
-        response.status(200).send(currentUser)
-    }
 
     async getUserById(request, response) {
         const id = request.params.id

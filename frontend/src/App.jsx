@@ -1,6 +1,4 @@
-import { useContext } from "react"
 import { Routes, Route } from 'react-router-dom'
-import { Context as UserContext } from "./context/UserContext"
 import Register from './components/pages/Auth/register'
 import FlashMessage from './components/layout/Message'
 import Profile from './components/pages/Auth/Profile'

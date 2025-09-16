@@ -19,7 +19,7 @@ function Navbar() {
         if (response.success) {
           setRequestUser(response.data.user)
         } else {
-          setUser(null)
+          setRequestUser(null)
         }
       }
       fetchUser()

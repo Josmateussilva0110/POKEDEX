@@ -30,7 +30,6 @@ function Home() {
   useEffect(() => {
     async function fetchSession() {
       const response = await requestData("/user/session", "GET", {}, true)
-      console.log('response sessão home: ', response)
       if (response.success) {
         setUser(response.data.user)
       } else {
